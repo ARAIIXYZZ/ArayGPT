@@ -1,6 +1,6 @@
 {
-  "api_key": "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",
-  "base_url": "https://openrouter.ai/api/v1",
-  "model": "deepseek/deepseek-chat-v3-0324:free",
-  "language": "id"
+    "apiKey": "sk-49fb936980f644b8a9037eeac620f80e",
+    "temperature": 0.7,
+    "maxTokens": 2048,
+    "model": "deepseek-coder"
 }
