@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ArayGPT - AI Assistant</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="galaxy-bg"></div>
+    
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <h1>Aray<span>GPT</span></h1>
+                <div class="status">
+                    <span class="dot"></span>
+                    <span>Online</span>
+                </div>
+            </div>
+            <div class="header-controls">
+                <button id="theme-toggle" class="btn-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M12 2V4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M12 20V22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M4.93 4.93L6.34 6.34" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M17.66 17.66L19.07 19.07" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M2 12H4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M20 12H22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M6.34 17.66L4.93 19.07" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M19.07 4.93L17.66 6.34" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+                <button id="settings-toggle" class="btn-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M19.4 15C19.2669 15.3044 19.2025 15.6343 19.2 15.968C19.2 16.3017 19.2624 16.6316 19.3933 16.936C19.5243 17.2404 19.7206 17.5124 19.968 17.732C20.2155 17.9516 20.5085 18.1138 20.8267 18.2067C21.1449 18.2996 21.4805 18.321 21.808 18.2693C22.1356 18.2177 22.4473 18.0942 22.7227 17.9073C22.9981 17.7204 23.2305 17.4747 23.4033 17.1873C23.5762 16.9 23.6854 16.5782 23.7233 16.244C23.7613 15.9098 23.727 15.5714 23.6227 15.252L22.0227 10.752C21.9184 10.4326 21.8841 10.0942 21.922 9.76C21.96 9.4258 22.0692 9.104 22.242 8.81667C22.4149 8.52933 22.6473 8.28362 22.9227 8.09672C23.1981 7.90982 23.5098 7.78632 23.8373 7.73467C24.1649 7.68302 24.5005 7.70441 24.8187 7.79733C25.1369 7.89025 25.4299 8.05241 25.6773 8.272C25.9248 8.49159 26.1211 8.76357 26.252 9.068C26.383 9.37243 26.4454 9.70232 26.4353 10.036C26.4253 10.3697 26.343 10.699 26.1933 11L24.5933 15.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M4.80667 11C4.657 10.699 4.57467 10.3697 4.56467 10.036C4.55467 9.70232 4.617 9.37243 4.748 9.068C4.87896 8.76357 5.0753 8.49159 5.32267 8.272C5.57004 8.05241 5.86304 7.89025 6.18122 7.79733C6.4994 7.70441 6.835 7.68302 7.16256 7.73467C7.49012 7.78632 7.80182 7.90982 8.07722 8.09672C8.35262 8.28362 8.58504 8.52933 8.75789 8.81667C8.93074 9.104 9.03993 9.4258 9.07789 9.76C9.11585 10.0942 9.08156 10.4326 8.97722 10.752L7.37722 15.252C7.27289 15.5714 7.2386 15.9098 7.27656 16.244C7.31452 16.5782 7.4237 16.9 7.59655 17.1873C7.7694 17.4747 8.00182 17.7204 8.27722 17.9073C8.55262 18.0942 8.86432 18.2177 9.19189 18.2693C9.51945 18.321 9.85504 18.2996 10.1732 18.2067C10.4914 18.1138 10.7844 17.9516 11.0318 17.732C11.2792 17.5124 11.4755 17.2404 11.6064 16.936C11.7374 16.6316 11.7998 16.3017 11.7898 15.968C11.7798 15.6343 11.6974 15.3044 11.5487 15L10.0487 10.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <main class="chat-container">
+            <div class="welcome-section">
+                <div class="welcome-content">
+                    <div class="ai-avatar">
+                        <div class="avatar-glow"></div>
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2C13.3132 2 14.6136 2.25866 15.8268 2.7612C17.0401 3.26375 18.1425 4.00035 19.0711 4.92893C19.9997 5.85752 20.7362 6.95991 21.2388 8.17317C21.7413 9.38642 22 10.6868 22 12C22 14.6522 20.9464 17.1957 19.0711 19.0711C17.1957 20.9464 14.6522 22 12 22C9.34784 22 6.8043 20.9464 4.92893 19.0711C3.05357 17.1957 2 14.6522 2 12C2 9.34784 3.05357 6.8043 4.92893 4.92893C6.8043 3.05357 9.34784 2 12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M9.09 9C9.3251 8.33167 9.78915 7.76811 10.4 7.40913C11.0108 7.05016 11.7289 6.91894 12.4272 7.03871C13.1255 7.15848 13.7588 7.52152 14.2151 8.06353C14.6713 8.60553 14.9211 9.29152 14.92 10C14.92 12 11.92 13 11.92 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 17H12.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <h2>Halo, saya ArayGPT</h2>
+                    <p>Asisten AI Anda yang siap membantu dengan berbagai pertanyaan dan tugas.</p>
+                    <div class="suggestions">
+                        <button class="suggestion-btn">Jelaskan teori relativitas</button>
+                        <button class="suggestion-btn">Bantu saya menulis kode</button>
+                        <button class="suggestion-btn">Terjemahkan teks ini</button>
+                        <button class="suggestion-btn">Buat rencana perjalanan</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chat-messages" id="chat-messages">
+                <!-- Pesan akan ditampilkan di sini -->
+            </div>
+        </main>
+
+        <div class="input-container">
+            <div class="input-wrapper">
+                <textarea id="message-input" placeholder="Ketik pesan Anda di sini..." rows="1"></textarea>
+                <button id="send-btn" class="send-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M22 2L11 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="disclaimer">
+                <p>ArayGPT dapat membuat kesalahan. Harap verifikasi informasi penting.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Settings -->
+    <div id="settings-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Pengaturan</h3>
+                <button id="close-modal" class="btn-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="setting-group">
+                    <label for="api-key">API Key</label>
+                    <input type="password" id="api-key" placeholder="Masukkan API Key Anda">
+                </div>
+                <div class="setting-group">
+                    <label for="model-select">Model</label>
+                    <select id="model-select">
+                        <option value="deepseek/deepseek-chat-v3-0324:free">DeepSeek Chat v3</option>
+                        <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                        <option value="gpt-4">GPT-4</option>
+                    </select>
+                </div>
+                <div class="setting-group">
+                    <label for="language-select">Bahasa</label>
+                    <select id="language-select">
+                        <option value="id">Bahasa Indonesia</option>
+                        <option value="en">English</option>
+                    </select>
+                </div>
+                <div class="setting-group">
+                    <label for="temperature">Temperature: <span id="temp-value">0.7</span></label>
+                    <input type="range" id="temperature" min="0" max="1" step="0.1" value="0.7">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="save-settings" class="btn-primary">Simpan</button>
+                <button id="reset-settings" class="btn-secondary">Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="javascript.js"></script>
+</body>
+</html>
