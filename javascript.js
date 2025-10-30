@@ -1,8 +1,8 @@
 // Konfigurasi Awal
 let config = {
-    api_key: "",
+    api_key: "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",
     base_url: "https://openrouter.ai/api/v1",
-    model: "deepseek/deepseek-chat-v3-0324",
+    model: "deepseek/deepseek-chat-v3-0324:free",
     language: "id",
     temperature: 0.7
 };
@@ -36,6 +36,15 @@ function initApp() {
     loadConfig();
     setupMessageInput();
     applyTheme();
+    checkAPIKey();
+}
+
+// Cek API Key
+function checkAPIKey() {
+    if (!config.api_key || config.api_key === "") {
+        showNotification('Silakan atur API Key di pengaturan terlebih dahulu', 'warning');
+        openSettings();
+    }
 }
 
 // Setup Message Input
@@ -51,6 +60,13 @@ function sendMessage() {
     const message = messageInput.value.trim();
     if (!message) return;
     
+    // Validasi API key
+    if (!config.api_key || config.api_key === "") {
+        showNotification('Silakan atur API Key di pengaturan terlebih dahulu', 'error');
+        openSettings();
+        return;
+    }
+    
     addMessage(message, 'user');
     messageInput.value = '';
     messageInput.style.height = 'auto';
@@ -58,10 +74,8 @@ function sendMessage() {
     showTypingIndicator();
     sendBtn.disabled = true;
     
-    // Simulasi delay untuk efek typing
-    setTimeout(() => {
-        generateAIResponse(message);
-    }, 1000);
+    // Generate response AI
+    generateAIResponse(message);
 }
 
 // Handle Keyboard Shortcuts
@@ -75,7 +89,7 @@ function handleKeyDown(e) {
 // Tambahkan Pesan ke Chat
 function addMessage(text, sender) {
     // Sembunyikan welcome section jika ada pesan pertama
-    if (chatMessages.children.length === 0) {
+    if (welcomeSection.style.display !== 'none') {
         welcomeSection.style.display = 'none';
         chatMessages.style.display = 'flex';
     }
@@ -157,16 +171,16 @@ function hideTypingIndicator() {
 // Generate Response AI
 async function generateAIResponse(userMessage) {
     try {
-        // Cek apakah API key sudah diatur
-        if (!config.api_key) {
+        // Validasi API key lagi
+        if (!config.api_key || config.api_key === "") {
             hideTypingIndicator();
-            addMessage("Silakan atur API key Anda di pengaturan terlebih dahulu.", 'ai');
+            addMessage("Silakan atur API Key Anda di pengaturan terlebih dahulu.", 'ai');
             sendBtn.disabled = false;
             return;
         }
-        
+
         // Baca system prompt dari file
-        let systemPrompt = "Anda adalah asisten AI yang membantu. Berikan respons yang jelas, informatif, dan ramah.";
+        let systemPrompt = "Anda adalah ArayGPT, asisten AI yang cerdas dan ramah. Berikan jawaban yang jelas, informatif, dan mudah dipahami dalam bahasa yang sesuai dengan permintaan pengguna.";
         
         try {
             const response = await fetch('system-prompt.txt');
@@ -177,40 +191,70 @@ async function generateAIResponse(userMessage) {
             console.warn('Tidak dapat memuat system prompt, menggunakan default');
         }
         
-        // Siapkan data untuk API
+        // Siapkan data untuk API - format yang benar untuk OpenRouter
         const requestData = {
             model: config.model,
             messages: [
-                { role: "system", content: systemPrompt },
-                { role: "user", content: userMessage }
+                { 
+                    role: "system", 
+                    content: systemPrompt 
+                },
+                { 
+                    role: "user", 
+                    content: userMessage 
+                }
             ],
-            temperature: config.temperature
+            temperature: config.temperature,
+            max_tokens: 2048
         };
         
-        // Kirim request ke API
+        console.log('Mengirim request ke:', config.base_url);
+        console.log('Model:', config.model);
+        
+        // Kirim request ke API dengan headers yang benar
         const response = await fetch(`${config.base_url}/chat/completions`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${config.api_key}`
+                'Authorization': `Bearer ${config.api_key}`,
+                'HTTP-Referer': window.location.origin,
+                'X-Title': 'ArayGPT'
             },
             body: JSON.stringify(requestData)
         });
         
+        console.log('Response status:', response.status);
+        
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            const errorText = await response.text();
+            console.error('Error response:', errorText);
+            
+            if (response.status === 401) {
+                throw new Error('API Key tidak valid. Silakan periksa kembali API Key Anda di pengaturan.');
+            } else if (response.status === 402) {
+                throw new Error('Quota API habis atau tidak mencukupi.');
+            } else if (response.status === 429) {
+                throw new Error('Terlalu banyak request. Silakan coba lagi nanti.');
+            } else {
+                throw new Error(`HTTP error! status: ${response.status}. ${errorText}`);
+            }
         }
         
         const data = await response.json();
-        const aiResponse = data.choices[0].message.content;
+        console.log('API Response:', data);
         
-        hideTypingIndicator();
-        addMessage(aiResponse, 'ai');
+        if (data.choices && data.choices.length > 0) {
+            const aiResponse = data.choices[0].message.content;
+            hideTypingIndicator();
+            addMessage(aiResponse, 'ai');
+        } else {
+            throw new Error('Format response tidak sesuai dari API');
+        }
         
     } catch (error) {
         console.error('Error generating AI response:', error);
         hideTypingIndicator();
-        addMessage(`Maaf, terjadi kesalahan: ${error.message}. Pastikan API key Anda valid dan koneksi internet stabil.`, 'ai');
+        addMessage(`Maaf, terjadi kesalahan: ${error.message}`, 'ai');
     } finally {
         sendBtn.disabled = false;
     }
@@ -246,7 +290,7 @@ function closeSettings() {
 }
 
 function saveSettingsHandler() {
-    config.api_key = document.getElementById('api-key').value;
+    config.api_key = document.getElementById('api-key').value.trim();
     config.model = document.getElementById('model-select').value;
     config.language = document.getElementById('language-select').value;
     config.temperature = parseFloat(document.getElementById('temperature').value);
@@ -261,7 +305,7 @@ function saveSettingsHandler() {
 function resetSettingsHandler() {
     if (confirm('Apakah Anda yakin ingin mengatur ulang pengaturan ke default?')) {
         config = {
-            api_key: "",
+            api_key: "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",
             base_url: "https://openrouter.ai/api/v1",
             model: "deepseek/deepseek-chat-v3-0324:free",
             language: "id",
@@ -323,9 +367,12 @@ function saveConfig() {
 function loadConfig() {
     const savedConfig = localStorage.getItem('araygpt-config');
     if (savedConfig) {
-        config = JSON.parse(savedConfig);
-    } else {
-        // Coba muat dari file config
+        const parsedConfig = JSON.parse(savedConfig);
+        config = { ...config, ...parsedConfig };
+    }
+    
+    // Jika masih tidak ada API key, coba load dari file
+    if (!config.api_key || config.api_key === "") {
         fetch('ArayGPT_config.json')
             .then(response => {
                 if (response.ok) {
@@ -334,17 +381,27 @@ function loadConfig() {
                 throw new Error('Config file not found');
             })
             .then(externalConfig => {
-                config = { ...config, ...externalConfig };
-                saveConfig();
+                if (externalConfig.api_key) {
+                    config.api_key = externalConfig.api_key;
+                    saveConfig();
+                    showNotification('API Key berhasil dimuat dari file config', 'success');
+                }
             })
             .catch(error => {
                 console.warn('Tidak dapat memuat config file:', error);
+                showNotification('Silakan masukkan API Key di pengaturan', 'warning');
             });
     }
 }
 
 // Notifikasi
 function showNotification(message, type = 'info') {
+    // Hapus notifikasi sebelumnya jika ada
+    const existingNotification = document.querySelector('.notification');
+    if (existingNotification) {
+        existingNotification.remove();
+    }
+    
     const notification = document.createElement('div');
     notification.className = `notification ${type}`;
     notification.textContent = message;
@@ -360,11 +417,15 @@ function showNotification(message, type = 'info') {
     notification.style.zIndex = '1001';
     notification.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
     notification.style.transition = 'all 0.3s ease';
+    notification.style.transform = 'translateX(100%)';
+    notification.style.opacity = '0';
     
     if (type === 'success') {
         notification.style.background = 'var(--success)';
     } else if (type === 'error') {
         notification.style.background = 'var(--error)';
+    } else if (type === 'warning') {
+        notification.style.background = 'var(--warning)';
     } else {
         notification.style.background = 'var(--accent)';
     }
@@ -377,7 +438,7 @@ function showNotification(message, type = 'info') {
         notification.style.opacity = '1';
     }, 10);
     
-    // Hapus setelah 3 detik
+    // Hapus setelah 4 detik
     setTimeout(() => {
         notification.style.transform = 'translateX(100%)';
         notification.style.opacity = '0';
@@ -386,7 +447,7 @@ function showNotification(message, type = 'info') {
                 notification.parentNode.removeChild(notification);
             }
         }, 300);
-    }, 3000);
+    }, 4000);
 }
 
 // Event listener untuk menutup modal saat klik di luar
@@ -399,4 +460,14 @@ window.addEventListener('click', (e) => {
 // Event listener untuk update temperature value
 document.getElementById('temperature').addEventListener('input', function() {
     document.getElementById('temp-value').textContent = this.value;
+});
+
+// Tambahkan juga event listener untuk modal yang mungkin belum ada di DOM saat script load
+document.addEventListener('DOMContentLoaded', function() {
+    const tempSlider = document.getElementById('temperature');
+    if (tempSlider) {
+        tempSlider.addEventListener('input', function() {
+            document.getElementById('temp-value').textContent = this.value;
+        });
+    }
 });
