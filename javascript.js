@@ -2,7 +2,7 @@
 let config = {
     api_key: "",
     base_url: "https://openrouter.ai/api/v1",
-    model: "deepseek/deepseek-chat-v3-0324:free",
+    model: "deepseek/deepseek-chat-v3-0324",
     language: "id",
     temperature: 0.7
 };
